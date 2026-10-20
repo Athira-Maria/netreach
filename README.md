@@ -349,6 +349,7 @@ src/main/java/com/netreach
 
 | `GET` | `/api/zones/{id}/nearby-wifi?radiusKm=1` | Wi-Fi points near a zone |
 
+| `GET` | `/api/zones/serious` | List confirmed (serious) zones |
 
 
 \### Wi-Fi access points

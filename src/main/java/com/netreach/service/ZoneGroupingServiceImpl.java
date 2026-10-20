@@ -46,4 +46,9 @@ public class ZoneGroupingServiceImpl implements ZoneGroupingService {
         return zoneRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone not found: " + id));
     }
+    
+    @Override
+    public List<AffectedZone> getSeriousZones() {
+        return zoneRepo.findByStatus(ZoneStatus.CONFIRMED);
+    }
 }

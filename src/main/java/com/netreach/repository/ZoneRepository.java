@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ZoneRepository extends JpaRepository<AffectedZone, Long> {
     List<AffectedZone> findByStatusNot(ZoneStatus status);
+    List<AffectedZone> findByStatus(ZoneStatus status);
 }

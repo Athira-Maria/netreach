@@ -34,4 +34,9 @@ public class ZoneController {
         AffectedZone zone = zoneService.getZone(id);
         return wifiService.findNearby(zone.getCenterLat(), zone.getCenterLng(), radiusKm);
     }
+
+    @GetMapping("/serious")
+    public List<AffectedZone> serious() {
+        return zoneService.getSeriousZones();
+    }
 }
