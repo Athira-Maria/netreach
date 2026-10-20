@@ -59,4 +59,9 @@ public class ConnectivityReportService {
         report.setStatus(status);
         return reportRepo.save(report);
     }
+    
+
+    public List<ConnectivityReport> getByStatus(ReportStatus status) {
+        return reportRepo.findByStatus(status);
+    }
 }

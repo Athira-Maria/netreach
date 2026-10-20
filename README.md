@@ -336,6 +336,7 @@ src/main/java/com/netreach
 
 | `PUT` | `/api/reports/{id}/status?value=RESOLVED` | Update status (`OPEN`, `IN\_PROGRESS`, `RESOLVED`) |
 
+| `GET` | `/api/reports/status/{value}` | List reports with one status (`OPEN`, `IN_PROGRESS`, `RESOLVED`) |
 
 
 \### Affected zones

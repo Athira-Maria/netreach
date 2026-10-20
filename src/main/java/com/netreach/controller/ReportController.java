@@ -42,5 +42,10 @@ public class ReportController {
     @PutMapping("/{id}/status")
     public ConnectivityReport updateStatus(@PathVariable Long id, @RequestParam ReportStatus value) {
         return service.updateStatus(id, value);
+    }    
+
+    @GetMapping("/status/{value}")
+    public List<ConnectivityReport> getByStatus(@PathVariable ReportStatus value) {
+        return service.getByStatus(value);
     }
 }
