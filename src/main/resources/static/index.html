@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetReach</title>
+<style>
+:root{--ink:#0e2b33;--muted:#53696f;--paper:#f2f6f6;--panel:#fff;--line:#d3dfdf;--teal:#0b7f72;--teal-d:#086559;--on-teal:#fff;--amber:#a15f00;--red:#b3261e;--ok-bg:#e1f3ef;--warn-bg:#fbeed7;--bad-bg:#f9e0de}
+@media (prefers-color-scheme:dark){:root{--ink:#e4eeee;--muted:#9bb0b4;--paper:#0d1b20;--panel:#14272d;--line:#274048;--teal:#3cc2b0;--teal-d:#6fd8c9;--on-teal:#062a25;--amber:#f0b252;--red:#ff8d84;--ok-bg:#12372f;--warn-bg:#3b2e12;--bad-bg:#3e1b19}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 70px}
+h1,h2{font-family:Georgia,"Times New Roman",serif;margin:0}
+h1{font-size:2.1rem;letter-spacing:-.01em}
+h2{font-size:1.3rem;margin-bottom:12px}
+.lead{color:var(--muted);margin:6px 0 22px;max-width:60ch}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:24px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;border-radius:0;padding:10px 14px;font:inherit;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--ink);border-color:var(--teal);font-weight:600}
+section{display:none}
+section.active{display:block}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;align-items:start}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font-size:.9rem;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+textarea{min-height:76px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font:inherit;cursor:pointer;border-radius:6px;padding:9px 16px;border:1px solid var(--teal)}
+.primary{background:var(--teal);color:var(--on-teal);font-weight:600}
+.primary:hover{background:var(--teal-d)}
+.ghost{background:transparent;color:var(--teal-d)}
+.ghost:hover{background:var(--ok-bg)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+ul{list-style:none;margin:0;padding:0}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 14px;padding:14px 0 14px 14px;border-bottom:1px solid var(--line);border-left:4px solid var(--line)}
+.row.bad{border-left-color:var(--red)}
+.row.warn{border-left-color:var(--amber)}
+.row.ok{border-left-color:var(--teal)}
+.sub{display:block;color:var(--muted);font-size:.9rem}
+.zhead{display:flex;align-items:center;gap:12px}
+.zact{display:flex;align-items:center;gap:10px}
+.sublist{flex-basis:100%}
+.sublist .row{padding-top:8px;padding-bottom:8px;margin-top:6px}
+.bars .on{fill:currentColor}
+.bars .off{fill:var(--line)}
+.bars.bad{color:var(--red)}
+.bars.warn{color:var(--amber)}
+.bars.ok{color:var(--teal)}
+.pill{padding:2px 10px;border-radius:99px;font-size:.85rem;font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--teal-d)}
+.pill.warn{background:var(--warn-bg);color:var(--amber)}
+.pill.bad{background:var(--bad-bg);color:var(--red)}
+.pill.off{background:var(--line);color:var(--muted)}
+.empty{color:var(--muted);padding:14px 0}
+.note{margin-top:22px;padding:12px 16px;border-left:4px solid var(--teal);background:var(--ok-bg)}
+.note p{margin:0 0 8px}
+.bar{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+#toast.show{opacity:1}
+#toast.bad{background:#b3261e;color:#fff}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NetReach</h1>
+  <p class="lead">Report internet problems in your area, see which areas are affected, and find a working Wi-Fi point nearby.</p>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="report">Report a problem</button>
+    <button role="tab" aria-selected="false" data-tab="zones">Affected zones</button>
+    <button role="tab" aria-selected="false" data-tab="wifi">Wi-Fi points</button>
+  </nav>
+
+  <section id="tab-report" class="active">
+    <div class="split">
+      <form id="reportForm">
+        <h2>Report a problem</h2>
+        <label>Your resident ID<input name="userId" type="number" min="1" required placeholder="Register on the right to get one"></label>
+        <label>What is wrong
+          <select name="issueType">
+            <option value="NO_SIGNAL">No signal</option>
+            <option value="SLOW_SPEED">Slow speed</option>
+            <option value="FREQUENT_DROPS">Connection keeps dropping</option>
+            <option value="CONGESTION">Network is congested</option>
+          </select>
+        </label>
+        <label>Describe it<textarea name="description" required placeholder="For example: no network in the hostel since morning"></textarea></label>
+        <label>Place name<input name="locationName" required placeholder="For example: Hostel A"></label>
+        <div class="two">
+          <label>Latitude<input name="latitude" type="number" step="any" required value="10.0270"></label>
+          <label>Longitude<input name="longitude" type="number" step="any" required value="76.3075"></label>
+        </div>
+        <button type="button" id="locate" class="ghost">Use my location</button>
+        <button class="primary">Send report</button>
+      </form>
+
+      <form id="userForm">
+        <h2>New here? Register as a resident</h2>
+        <label>Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Phone<input name="phone" required></label>
+        <label>Hostel or area<input name="hostelOrArea" required></label>
+        <button class="primary">Register</button>
+      </form>
+    </div>
+    <div id="reportResult"></div>
+  </section>
+
+  <section id="tab-zones">
+    <div class="bar"><h2>Affected zones</h2><button class="ghost" id="refreshZones">Refresh</button></div>
+    <ul id="zoneList"></ul>
+  </section>
+
+  <section id="tab-wifi">
+    <div class="split">
+      <form id="nearForm">
+        <h2>Find Wi-Fi near you</h2>
+        <div class="two">
+          <label>Latitude<input name="lat" type="number" step="any" required value="10.0270"></label>
+          <label>Longitude<input name="lng" type="number" step="any" required value="76.3075"></label>
+        </div>
+        <label>Search within (km)<input name="radius" type="number" step="any" min="0.1" required value="1"></label>
+        <button class="primary">Search</button>
+        <ul id="nearList"></ul>
+      </form>
+
+      <form id="wifiForm">
+        <h2>Add an access point</h2>
+        <label>Name<input name="name" required placeholder="For example: Library Wi-Fi"></label>
+        <label>Network name (SSID)<input name="ssid" required></label>
+        <label>Owner<input name="ownerName" required></label>
+        <div class="two">
+          <label>Latitude<input name="latitude" type="number" step="any" required></label>
+          <label>Longitude<input name="longitude" type="number" step="any" required></label>
+        </div>
+        <button class="primary">Add access point</button>
+      </form>
+    </div>
+    <h2 style="margin-top:34px">All access points</h2>
+    <ul id="wifiList"></ul>
+  </section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tt;
+function toast(msg, bad) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'show' + (bad ? ' bad' : '');
+  clearTimeout(tt);
+  tt = setTimeout(() => t.className = '', 4500);
+}
+async function api(url, opt) {
+  let r;
+  try { r = await fetch(url, opt); }
+  catch (e) { throw new Error('Cannot reach the NetReach server. Check that the app is running.'); }
+  const t = await r.text();
+  if (!r.ok) {
+    let m = t;
+    try { const j = JSON.parse(t); m = j.message || j.error || t; } catch (e) {}
+    throw new Error(m || 'Request failed (' + r.status + ')');
+  }
+  return t ? JSON.parse(t) : null;
+}
+const send = (method, url, body) => api(url, {
+  method, headers: {'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined
+});
+function km(a, b, c, d) {
+  const R = 6371, r = x => x * Math.PI / 180, dl = r(c - a), dn = r(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dn / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+const STATUS = {CONFIRMED: 'Confirmed', WATCH: 'Being watched', RESOLVED: 'Resolved'};
+const CLS = {CONFIRMED: 'bad', WATCH: 'warn', RESOLVED: 'ok'};
+
+function bars(n, cls) {
+  let s = '<svg class="bars ' + cls + '" viewBox="0 0 28 20" width="28" height="20" role="img" aria-label="' + n + ' reports">';
+  for (let i = 0; i < 4; i++) {
+    const h = 5 + i * 4;
+    s += '<rect x="' + (i * 7) + '" y="' + (20 - h) + '" width="5" height="' + h + '" rx="1" class="' + (i < n ? 'on' : 'off') + '"/>';
+  }
+  return s + '</svg>';
+}
+function wifiRow(w, from) {
+  const d = from ? ', ' + km(from.lat, from.lng, w.latitude, w.longitude).toFixed(2) + ' km away' : '';
+  return '<li class="row ' + (w.available ? 'ok' : '') + '"><div><strong>' + esc(w.name) + '</strong><span class="sub">Network ' +
+    esc(w.ssid) + ', owned by ' + esc(w.ownerName) + d + '</span></div><span class="pill ' + (w.available ? 'ok' : 'off') + '">' +
+    (w.available ? 'Available' : 'Switched off') + '</span></li>';
+}
+
+/* Zones */
+function zoneRow(z) {
+  const cls = CLS[z.status] || 'warn';
+  const n = z.reportCount;
+  return '<li class="row zone ' + cls + '" data-lat="' + z.centerLat + '" data-lng="' + z.centerLng + '" data-id="' + z.id + '">' +
+    '<div class="zhead">' + bars(Math.min(n, 4), cls) + '<div><strong>' + esc(z.name) + '</strong><span class="sub">' +
+    n + (n === 1 ? ' report' : ' reports') + ' within ' + z.radiusMeters + ' m</span></div></div>' +
+    '<div class="zact"><span class="pill ' + cls + '">' + (STATUS[z.status] || esc(z.status)) + '</span>' +
+    '<button class="ghost" data-zone="' + z.id + '">Find nearby Wi-Fi</button></div>' +
+    '<ul class="sublist" id="zw' + z.id + '"></ul></li>';
+}
+async function loadZones() {
+  try {
+    const z = await api('/api/zones');
+    $('#zoneList').innerHTML = z.length ? z.map(zoneRow).join('') :
+      '<li class="empty">No affected zones yet. Reports from the same area will appear here as a zone.</li>';
+  } catch (err) { toast(err.message, 1); }
+}
+$('#zoneList').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-zone]');
+  if (!b) return;
+  const li = b.closest('li.zone'), id = b.dataset.zone;
+  try {
+    const w = await api('/api/zones/' + id + '/nearby-wifi?radiusKm=1');
+    const from = {lat: +li.dataset.lat, lng: +li.dataset.lng};
+    $('#zw' + id).innerHTML = w.length ? w.map(x => wifiRow(x, from)).join('') :
+      '<li class="empty">No available Wi-Fi point within 1 km of this zone.</li>';
+  } catch (err) { toast(err.message, 1); }
+});
+$('#refreshZones').onclick = loadZones;
+
+/* Wi-Fi */
+async function loadWifi() {
+  try {
+    const w = await api('/api/wifi');
+    $('#wifiList').innerHTML = w.length ? w.map(x => {
+      const li = wifiRow(x);
+      return li.replace('</li>', '<button class="ghost" data-toggle="' + x.id + '">' +
+        (x.available ? 'Switch off' : 'Switch on') + '</button></li>');
+    }).join('') : '<li class="empty">No access points yet. Add one using the form above.</li>';
+  } catch (err) { toast(err.message, 1); }
+}
+$('#wifiList').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-toggle]');
+  if (!b) return;
+  try { await send('PUT', '/api/wifi/' + b.dataset.toggle + '/toggle'); loadWifi(); }
+  catch (err) { toast(err.message, 1); }
+});
+$('#wifiForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    await send('POST', '/api/wifi', {
+      name: f.name.value, ssid: f.ssid.value, ownerName: f.ownerName.value,
+      latitude: +f.latitude.value, longitude: +f.longitude.value, available: true
+    });
+    toast('Access point added');
+    f.reset();
+    loadWifi();
+  } catch (err) { toast(err.message, 1); }
+});
+$('#nearForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, from = {lat: +f.lat.value, lng: +f.lng.value};
+  try {
+    const w = await api('/api/wifi/nearby?lat=' + from.lat + '&lng=' + from.lng + '&radiusKm=' + f.radius.value);
+    $('#nearList').innerHTML = w.length ? w.map(x => wifiRow(x, from)).join('') :
+      '<li class="empty">No available access point within ' + esc(f.radius.value) + ' km. Try a larger distance.</li>';
+  } catch (err) { toast(err.message, 1); }
+});
+
+/* Reports and residents */
+$('#locate').onclick = () => {
+  if (!navigator.geolocation) return toast('This browser cannot share your location. Enter the coordinates by hand.', 1);
+  navigator.geolocation.getCurrentPosition(p => {
+    const f = $('#reportForm');
+    f.latitude.value = p.coords.latitude.toFixed(5);
+    f.longitude.value = p.coords.longitude.toFixed(5);
+  }, () => toast('Location is blocked. Enter the coordinates by hand.', 1));
+};
+$('#userForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    const r = await send('POST', '/api/users/residents', {
+      name: f.name.value, email: f.email.value, phone: f.phone.value, hostelOrArea: f.hostelOrArea.value
+    });
+    $('#reportForm').userId.value = r.id;
+    toast('Registered. Your resident ID is ' + r.id + ' and it is filled in for you.');
+    f.reset();
+  } catch (err) { toast(err.message, 1); }
+});
+$('#reportForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    const r = await send('POST', '/api/reports', {
+      userId: +f.userId.value, issueType: f.issueType.value, description: f.description.value,
+      locationName: f.locationName.value, latitude: +f.latitude.value, longitude: +f.longitude.value
+    });
+    const z = r.zone, n = z.reportCount;
+    $('#reportResult').innerHTML = '<div class="note"><p><strong>Report sent.</strong> It was added to ' + esc(z.name) +
+      ', which now has ' + n + (n === 1 ? ' report' : ' reports') + '.</p><p>' +
+      (z.status === 'CONFIRMED' ? 'This area is confirmed as affected.' : 'More reports from this area will confirm it.') +
+      '</p><button type="button" class="ghost" id="seeZones">See affected zones</button></div>';
+    $('#seeZones').onclick = () => show('zones');
+    f.description.value = '';
+  } catch (err) { toast(err.message, 1); }
+});
+
+/* Tabs */
+function show(name) {
+  document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('active', s.id === 'tab-' + name));
+  if (name === 'zones') loadZones();
+  if (name === 'wifi') loadWifi();
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => show(b.dataset.tab));
+</script>
+</body>
+</html>
