@@ -39,4 +39,9 @@ public class WifiAccessPointService {
         ap.toggleAvailability();
         return wifiRepo.save(ap);
     }
+
+    public WifiAccessPoint getById(Long id) {
+        return wifiRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Access point not found: " + id));
+    }
 }
