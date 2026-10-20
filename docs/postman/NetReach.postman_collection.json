@@ -1,0 +1,501 @@
+{
+  "info": {
+    "name": "NetReach",
+    "description": "Requests for testing the NetReach REST API. Start the Spring Boot app first. Variable baseUrl is http://localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 Users",
+      "item": [
+        {
+          "name": "Add resident",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/residents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "residents"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anu\",\n  \"email\": \"anu@mail.com\",\n  \"phone\": \"9999999999\",\n  \"hostelOrArea\": \"Hostel A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expected: 200, response has id and roleName RESIDENT."
+          }
+        },
+        {
+          "name": "Add admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admins",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "admins"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin\",\n  \"email\": \"admin@mail.com\",\n  \"phone\": \"8888888888\",\n  \"department\": \"IT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expected: 200, roleName ADMIN."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 Connectivity reports",
+      "item": [
+        {
+          "name": "Submit report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"issueType\": \"NO_SIGNAL\",\n  \"description\": \"No network in hostel\",\n  \"latitude\": 10.027,\n  \"longitude\": 76.3075,\n  \"locationName\": \"Hostel A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expected: 200. The response includes the zone the report joined. Send it 3 times to see the zone become CONFIRMED."
+          }
+        },
+        {
+          "name": "List all reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get one report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update report status",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/1/status?value=RESOLVED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "1",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "value",
+                  "value": "RESOLVED"
+                }
+              ]
+            },
+            "description": "Values: OPEN, IN_PROGRESS, RESOLVED."
+          }
+        },
+        {
+          "name": "List reports by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/status/OPEN",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "status",
+                "OPEN"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 Affected zones",
+      "item": [
+        {
+          "name": "List all zones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/zones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "zones"
+              ]
+            },
+            "description": "Expected: zone with reportCount and status (WATCH or CONFIRMED)."
+          }
+        },
+        {
+          "name": "List serious (confirmed) zones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/zones/serious",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "zones",
+                "serious"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Nearby Wi-Fi for a zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/zones/1/nearby-wifi?radiusKm=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "zones",
+                "1",
+                "nearby-wifi"
+              ],
+              "query": [
+                {
+                  "key": "radiusKm",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Expected: available access points near the zone centre."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 Wi-Fi access points",
+      "item": [
+        {
+          "name": "Register access point",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Library WiFi\",\n  \"ssid\": \"LIB_NET\",\n  \"latitude\": 10.0275,\n  \"longitude\": 76.308,\n  \"available\": true,\n  \"ownerName\": \"Library\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List all access points",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get one access point",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Nearby access points",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi/nearby?lat=10.0270&lng=76.3075&radiusKm=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi",
+                "nearby"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "10.0270"
+                },
+                {
+                  "key": "lng",
+                  "value": "76.3075"
+                },
+                {
+                  "key": "radiusKm",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Switch availability on or off",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi/1/toggle",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi",
+                "1",
+                "toggle"
+              ]
+            },
+            "description": "Send again to switch it back on."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 Error cases",
+      "item": [
+        {
+          "name": "Missing description (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"issueType\": \"NO_SIGNAL\",\n  \"description\": \"\",\n  \"latitude\": 10.027,\n  \"longitude\": 76.3075,\n  \"locationName\": \"Hostel A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expected: 400, userId, issueType and description are required."
+          }
+        },
+        {
+          "name": "Unknown user (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 999,\n  \"issueType\": \"NO_SIGNAL\",\n  \"description\": \"No network in hostel\",\n  \"latitude\": 10.027,\n  \"longitude\": 76.3075,\n  \"locationName\": \"Hostel A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Expected: 404, User not found: 999."
+          }
+        },
+        {
+          "name": "Unknown zone (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/zones/999/nearby-wifi",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "zones",
+                "999",
+                "nearby-wifi"
+              ]
+            },
+            "description": "Expected: 404, Zone not found: 999."
+          }
+        },
+        {
+          "name": "Unknown access point (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/wifi/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wifi",
+                "999"
+              ]
+            },
+            "description": "Expected: 404, Access point not found: 999."
+          }
+        }
+      ]
+    }
+  ]
+}

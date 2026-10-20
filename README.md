@@ -11,7 +11,6 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1?logo=mysql&logoColor=white)
 ![Hibernate](https://img.shields.io/badge/JPA-Hibernate-59666C?logo=hibernate&logoColor=white)
 ![REST API](https://img.shields.io/badge/API-REST-blue)
-![UI](https://img.shields.io/badge/UI-HTML%20%7C%20CSS%20%7C%20JavaScript-E34F26?logo=html5&logoColor=white)
 
 **Advanced OOP – Objective 4 | Group 14**
 
@@ -45,20 +44,6 @@ Also included: custom exception handling with clear error messages (`400` and `4
 
 ---
 
-## 🖥️ Web Interface
-
-NetReach comes with a simple web page built with **HTML, CSS and JavaScript** (no extra framework). Spring Boot serves it from `src/main/resources/static/index.html`, so it needs no separate setup. Once the app is running, open **http://localhost:8080**.
-
-| Tab | What you can do |
-|---|---|
-| **Report a problem** | Register as a resident, then send a report. The page shows which zone the report joined and whether that zone is now confirmed. "Use my location" fills in your coordinates. |
-| **Affected zones** | See every zone with a signal-bar icon (more bars = more reports) and its status. Tap **Find nearby Wi-Fi** on a zone to list available access points near it, with distances. |
-| **Wi-Fi points** | Search for available access points near any location, add a new access point, and switch an access point on or off. |
-
-The page talks to the same REST API listed below, so everything you do on it can also be done in Postman.
-
----
-
 ## 🔄 How the Modules Work Together
 
 ```mermaid
@@ -82,7 +67,7 @@ Distances are calculated with the **Haversine formula** (`GeoUtils`).
 ## 🧱 Architecture
 
 ```
-Client (web page / Postman)
+Client (Postman / browser)
         │
         ▼
   Controller layer      ← REST endpoints
@@ -128,13 +113,6 @@ src/main/java/com/netreach
 ├── exception     ResourceNotFoundException, InvalidReportException,
 │                 GlobalExceptionHandler
 └── util          GeoUtils
-
-docs/diagrams                   architecture and class diagrams (PNG)
-
-src/main/resources
-├── static/index.html          web interface (HTML, CSS, JavaScript)
-├── application.properties.example
-└── application.properties     (your own copy, not in Git)
 ```
 
 ---
@@ -171,7 +149,6 @@ src/main/resources
      mvnw.cmd spring-boot:run
      ```
 5. The app starts on **http://localhost:8080**. Hibernate creates the tables automatically.
-6. Open **http://localhost:8080** in your browser to use the web interface.
 
 ---
 
@@ -190,13 +167,11 @@ src/main/resources
 | `GET` | `/api/reports` | List all reports |
 | `GET` | `/api/reports/{id}` | Get one report |
 | `PUT` | `/api/reports/{id}/status?value=RESOLVED` | Update status (`OPEN`, `IN_PROGRESS`, `RESOLVED`) |
-| `GET` | `/api/reports/status/{value}` | List reports with one status (`OPEN`, `IN_PROGRESS`, `RESOLVED`) |
 
 ### Affected zones
 | Method | Endpoint | Purpose |
 |---|---|---|
 | `GET` | `/api/zones` | List all zones |
-| `GET` | `/api/zones/serious` | List confirmed (serious) zones |
 | `GET` | `/api/zones/{id}/nearby-wifi?radiusKm=1` | Wi-Fi points near a zone |
 
 ### Wi-Fi access points
@@ -204,7 +179,6 @@ src/main/resources
 |---|---|---|
 | `POST` | `/api/wifi` | Register an access point |
 | `GET` | `/api/wifi` | List all access points |
-| `GET` | `/api/wifi/{id}` | Get one access point |
 | `GET` | `/api/wifi/nearby?lat=..&lng=..&radiusKm=1` | Available points near a location |
 | `PUT` | `/api/wifi/{id}/toggle` | Switch availability on or off |
 
@@ -255,18 +229,6 @@ Issue types: `NO_SIGNAL`, `SLOW_SPEED`, `FREQUENT_DROPS`, `CONGESTION`.
 
 ---
 
-## 📐 Diagrams
-
-### Architecture
-![Architecture](docs/diagrams/architecture_diagram.png)
-
-### Class diagrams
-![Domain classes](docs/diagrams/class_diagram_domain.png)
-
-![Service classes](docs/diagrams/class_diagram_services.png)
-
----
-
 ## 🌱 Sustainable Development Goals
 
 | Goal | How NetReach supports it |
@@ -283,7 +245,7 @@ Issue types: `NO_SIGNAL`, `SLOW_SPEED`, `FREQUENT_DROPS`, `CONGESTION`.
 - Notifications to administrators and providers for serious or recurring zones
 - Volunteers and access-point owners offering temporary connectivity
 - Lowering a zone's count and marking it resolved when its reports are resolved
-- A map view of affected zones
+- A map or web front end
 
 ---
 
