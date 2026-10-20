@@ -8,4 +8,5 @@ public interface ZoneGroupingService {
     AffectedZone assignToZone(ConnectivityReport report);
     List<AffectedZone> getAllZones();
     AffectedZone getZone(Long id);
+    List<AffectedZone> getSeriousZones();
 }
