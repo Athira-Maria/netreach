@@ -42,4 +42,9 @@ public class WifiController {
     public WifiAccessPoint toggle(@PathVariable Long id) {
         return service.toggleAvailability(id);
     }
+
+    @GetMapping("/{id}")
+    public WifiAccessPoint getOne(@PathVariable Long id) {
+        return service.getById(id);
+    }
 }

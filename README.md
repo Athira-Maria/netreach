@@ -366,7 +366,7 @@ src/main/java/com/netreach
 
 | `PUT` | `/api/wifi/{id}/toggle` | Switch availability on or off |
 
-
+| `GET` | `/api/wifi/{id}` | Get one access point |
 
 \### Try it
 
