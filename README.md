@@ -1,538 +1,305 @@
 <div align="center">
 
+# 📡 NetReach
 
+### Community-Driven Internet Connectivity Assistance Platform
 
-\# 📡 NetReach
+*Report it. Group it. Find a connection nearby.*
 
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1?logo=mysql&logoColor=white)
+![Hibernate](https://img.shields.io/badge/JPA-Hibernate-59666C?logo=hibernate&logoColor=white)
+![REST API](https://img.shields.io/badge/API-REST-blue)
+![UI](https://img.shields.io/badge/UI-HTML%20%7C%20CSS%20%7C%20JavaScript-E34F26?logo=html5&logoColor=white)
 
-
-\### Community-Driven Internet Connectivity Assistance Platform
-
-
-
-\*Report it. Group it. Find a connection nearby.\*
-
-
-
-!\[Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk\&logoColor=white)
-
-!\[Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?logo=springboot\&logoColor=white)
-
-!\[MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1?logo=mysql\&logoColor=white)
-
-!\[Hibernate](https://img.shields.io/badge/JPA-Hibernate-59666C?logo=hibernate\&logoColor=white)
-
-!\[REST API](https://img.shields.io/badge/API-REST-blue)
-
-
-
-\*\*Advanced OOP – Objective 4 | Group 14\*\*
-
-
+**Advanced OOP – Objective 4 | Group 14**
 
 </div>
 
+---
 
+## 🌍 The Problem
 
-\---
+Many students, residents and institutions, especially in hostels, residential areas and campuses, face poor or unavailable internet connectivity. Today each person complains separately to a provider. There is no shared place that shows **many people in the same area have the same problem**, or **where a working connection is available nearby**.
 
-
-
-\## 🌍 The Problem
-
-
-
-Many students, residents and institutions, especially in hostels, residential areas and campuses, face poor or unavailable internet connectivity. Today each person complains separately to a provider. There is no shared place that shows \*\*many people in the same area have the same problem\*\*, or \*\*where a working connection is available nearby\*\*.
-
-
-
-\## 💡 The Solution
-
-
+## 💡 The Solution
 
 NetReach does not repair network infrastructure. It is a central system where:
 
+1. 📝 Users **report** connectivity problems.
+2. 🧩 The system **groups** nearby reports into an **affected zone**.
+3. 📶 Registered community **Wi-Fi access points** near the zone are shown, so people know where they can connect.
 
+---
 
-1\. 📝 Users \*\*report\*\* connectivity problems.
-
-2\. 🧩 The system \*\*groups\*\* nearby reports into an \*\*affected zone\*\*.
-
-3\. 📶 Registered community \*\*Wi-Fi access points\*\* near the zone are shown, so people know where they can connect.
-
-
-
-\---
-
-
-
-\## ✨ Features
-
-
+## ✨ Features
 
 | Module | What it does |
-
 |---|---|
-
-| 📝 \*\*Connectivity Reporting\*\* | Users submit a report (issue type, description, location). Reports are stored in the database and can be listed, viewed and updated (`OPEN`, `IN\_PROGRESS`, `RESOLVED`). |
-
-| 🧩 \*\*Affected-Zone Grouping\*\* | Each new report is automatically placed in an existing zone within \*\*500 m\*\*, or starts a new one. A zone with \*\*3 or more reports\*\* becomes `CONFIRMED`. |
-
-| 📶 \*\*Nearby Wi-Fi Access Points\*\* | Admins register access points. The system lists the \*\*available\*\* ones nearest to a location or to an affected zone, sorted by distance. |
-
-
+| 📝 **Connectivity Reporting** | Users submit a report (issue type, description, location). Reports are stored in the database and can be listed, viewed and updated (`OPEN`, `IN_PROGRESS`, `RESOLVED`). |
+| 🧩 **Affected-Zone Grouping** | Each new report is automatically placed in an existing zone within **500 m**, or starts a new one. A zone with **3 or more reports** becomes `CONFIRMED`. |
+| 📶 **Nearby Wi-Fi Access Points** | Admins register access points. The system lists the **available** ones nearest to a location or to an affected zone, sorted by distance. |
 
 Also included: custom exception handling with clear error messages (`400` and `404`).
 
+---
 
+## 🖥️ Web Interface
 
-\---
+NetReach comes with a simple web page built with **HTML, CSS and JavaScript** (no extra framework). Spring Boot serves it from `src/main/resources/static/index.html`, so it needs no separate setup. Once the app is running, open **http://localhost:8080**.
 
+| Tab | What you can do |
+|---|---|
+| **Report a problem** | Register as a resident, then send a report. The page shows which zone the report joined and whether that zone is now confirmed. "Use my location" fills in your coordinates. |
+| **Affected zones** | See every zone with a signal-bar icon (more bars = more reports) and its status. Tap **Find nearby Wi-Fi** on a zone to list available access points near it, with distances. |
+| **Wi-Fi points** | Search for available access points near any location, add a new access point, and switch an access point on or off. |
 
+The page talks to the same REST API listed below, so everything you do on it can also be done in Postman.
 
-\## 🔄 How the Modules Work Together
+---
 
-
+## 🔄 How the Modules Work Together
 
 ```mermaid
-
 flowchart LR
-
-&#x20;   A\[User submits report<br/>POST /api/reports] --> B\[ConnectivityReportService]
-
-&#x20;   B --> C\[ZoneGroupingService<br/>assignToZone]
-
-&#x20;   C -->|within 500 m| D\[Join existing zone]
-
-&#x20;   C -->|no zone nearby| E\[Create new zone]
-
-&#x20;   D --> F\[(MySQL)]
-
-&#x20;   E --> F
-
-&#x20;   B --> F
-
-&#x20;   G\[GET /api/zones/id/nearby-wifi] --> H\[ZoneGroupingService<br/>getZone]
-
-&#x20;   H --> I\[WifiAccessPointService<br/>findNearby]
-
-&#x20;   I --> J\[Available Wi-Fi points,<br/>nearest first]
-
+    A[User submits report<br/>POST /api/reports] --> B[ConnectivityReportService]
+    B --> C[ZoneGroupingService<br/>assignToZone]
+    C -->|within 500 m| D[Join existing zone]
+    C -->|no zone nearby| E[Create new zone]
+    D --> F[(MySQL)]
+    E --> F
+    B --> F
+    G[GET /api/zones/id/nearby-wifi] --> H[ZoneGroupingService<br/>getZone]
+    H --> I[WifiAccessPointService<br/>findNearby]
+    I --> J[Available Wi-Fi points,<br/>nearest first]
 ```
 
+Distances are calculated with the **Haversine formula** (`GeoUtils`).
 
+---
 
-Distances are calculated with the \*\*Haversine formula\*\* (`GeoUtils`).
-
-
-
-\---
-
-
-
-\## 🧱 Architecture
-
-
+## 🧱 Architecture
 
 ```
-
-Client (Postman / browser)
-
-&#x20;       │
-
-&#x20;       ▼
-
-&#x20; Controller layer      ← REST endpoints
-
-&#x20;       │
-
-&#x20;       ▼
-
-&#x20; Service layer         ← business logic, zone grouping
-
-&#x20;       │
-
-&#x20;       ▼
-
-&#x20;Repository layer       ← Spring Data JPA
-
-&#x20;       │
-
-&#x20;       ▼
-
-&#x20;     MySQL
-
+Client (web page / Postman)
+        │
+        ▼
+  Controller layer      ← REST endpoints
+        │
+        ▼
+  Service layer         ← business logic, zone grouping
+        │
+        ▼
+ Repository layer       ← Spring Data JPA
+        │
+        ▼
+      MySQL
 ```
 
-
-
-\### OOP concepts used
-
-
+### OOP concepts used
 
 | Concept | Where |
-
 |---|---|
+| **Inheritance** | `User` (abstract) → `Resident`, `Admin` |
+| **Abstraction / Interface** | `ZoneGroupingService` with implementation `ZoneGroupingServiceImpl` |
+| **Polymorphism** | `getRoleName()` overridden in each user type |
+| **Encapsulation** | Private fields with getters and setters in all entities |
+| **Association** | One user → many reports; one zone → many reports |
+| **Exception handling** | `ResourceNotFoundException`, `InvalidReportException`, `GlobalExceptionHandler` |
 
-| \*\*Inheritance\*\* | `User` (abstract) → `Resident`, `Admin` |
+---
 
-| \*\*Abstraction / Interface\*\* | `ZoneGroupingService` with implementation `ZoneGroupingServiceImpl` |
-
-| \*\*Polymorphism\*\* | `getRoleName()` overridden in each user type |
-
-| \*\*Encapsulation\*\* | Private fields with getters and setters in all entities |
-
-| \*\*Association\*\* | One user → many reports; one zone → many reports |
-
-| \*\*Exception handling\*\* | `ResourceNotFoundException`, `InvalidReportException`, `GlobalExceptionHandler` |
-
-
-
-\---
-
-
-
-\## 🗂️ Project Structure
-
-
+## 🗂️ Project Structure
 
 ```
-
 src/main/java/com/netreach
-
 ├── NetreachApplication.java
-
 ├── model         User, Resident, Admin, ConnectivityReport,
-
 │                 AffectedZone, WifiAccessPoint, IssueType,
-
 │                 ReportStatus, ZoneStatus
-
 ├── repository    UserRepository, ReportRepository,
-
 │                 ZoneRepository, WifiRepository
-
 ├── service       ZoneGroupingService, ZoneGroupingServiceImpl,
-
 │                 ConnectivityReportService, WifiAccessPointService
-
 ├── controller    UserController, ReportController,
-
 │                 ZoneController, WifiController
-
 ├── dto           ReportRequest
-
 ├── exception     ResourceNotFoundException, InvalidReportException,
-
 │                 GlobalExceptionHandler
-
 └── util          GeoUtils
 
+docs/diagrams                   architecture and class diagrams (PNG)
+
+src/main/resources
+├── static/index.html          web interface (HTML, CSS, JavaScript)
+├── application.properties.example
+└── application.properties     (your own copy, not in Git)
 ```
 
+---
 
+## 🚀 Getting Started
 
-\---
+### Prerequisites
+- Java 17 or later
+- MySQL 8.x
+- Spring Tool Suite (or any Maven-capable IDE)
+- Postman (to try the API)
 
+### Setup
 
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   ```
+2. **Create the database** in MySQL
+   ```sql
+   CREATE DATABASE netreach;
+   ```
+3. **Create your settings file.** Copy
+   `src/main/resources/application.properties.example` to
+   `src/main/resources/application.properties` and enter your MySQL password:
+   ```properties
+   spring.datasource.password=YOUR_MYSQL_PASSWORD
+   ```
+   > `application.properties` is listed in `.gitignore`, so your password is never uploaded.
+4. **Import and run**
+   - In Spring Tool Suite: **File → Import → Existing Maven Projects**, then right-click the project → **Run As → Spring Boot App**.
+   - Or from a terminal in the project folder:
+     ```bash
+     mvnw.cmd spring-boot:run
+     ```
+5. The app starts on **http://localhost:8080**. Hibernate creates the tables automatically.
+6. Open **http://localhost:8080** in your browser to use the web interface.
 
-\## 🚀 Getting Started
+---
 
+## 🔌 API Reference
 
-
-\### Prerequisites
-
-\- Java 17 or later
-
-\- MySQL 8.x
-
-\- Spring Tool Suite (or any Maven-capable IDE)
-
-\- Postman (to try the API)
-
-
-
-\### Setup
-
-
-
-1\. \*\*Clone the repository\*\*
-
-&#x20;  ```bash
-
-&#x20;  git clone <repository-url>
-
-&#x20;  ```
-
-2\. \*\*Create the database\*\* in MySQL
-
-&#x20;  ```sql
-
-&#x20;  CREATE DATABASE netreach;
-
-&#x20;  ```
-
-3\. \*\*Create your settings file.\*\* Copy
-
-&#x20;  `src/main/resources/application.properties.example` to
-
-&#x20;  `src/main/resources/application.properties` and enter your MySQL password:
-
-&#x20;  ```properties
-
-&#x20;  spring.datasource.password=YOUR\_MYSQL\_PASSWORD
-
-&#x20;  ```
-
-&#x20;  > `application.properties` is listed in `.gitignore`, so your password is never uploaded.
-
-4\. \*\*Import and run\*\*
-
-&#x20;  - In Spring Tool Suite: \*\*File → Import → Existing Maven Projects\*\*, then right-click the project → \*\*Run As → Spring Boot App\*\*.
-
-&#x20;  - Or from a terminal in the project folder:
-
-&#x20;    ```bash
-
-&#x20;    mvnw.cmd spring-boot:run
-
-&#x20;    ```
-
-5\. The app starts on \*\*http://localhost:8080\*\*. Hibernate creates the tables automatically.
-
-
-
-\---
-
-
-
-\## 🔌 API Reference
-
-
-
-\### Users
-
+### Users
 | Method | Endpoint | Purpose |
-
 |---|---|---|
-
 | `POST` | `/api/users/residents` | Add a resident |
-
 | `POST` | `/api/users/admins` | Add an admin |
 
-
-
-\### Connectivity reports
-
+### Connectivity reports
 | Method | Endpoint | Purpose |
-
 |---|---|---|
-
 | `POST` | `/api/reports` | Submit a report (it is grouped into a zone automatically) |
-
 | `GET` | `/api/reports` | List all reports |
-
 | `GET` | `/api/reports/{id}` | Get one report |
-
-| `PUT` | `/api/reports/{id}/status?value=RESOLVED` | Update status (`OPEN`, `IN\_PROGRESS`, `RESOLVED`) |
-
+| `PUT` | `/api/reports/{id}/status?value=RESOLVED` | Update status (`OPEN`, `IN_PROGRESS`, `RESOLVED`) |
 | `GET` | `/api/reports/status/{value}` | List reports with one status (`OPEN`, `IN_PROGRESS`, `RESOLVED`) |
 
-
-\### Affected zones
-
+### Affected zones
 | Method | Endpoint | Purpose |
-
 |---|---|---|
-
 | `GET` | `/api/zones` | List all zones |
-
+| `GET` | `/api/zones/serious` | List confirmed (serious) zones |
 | `GET` | `/api/zones/{id}/nearby-wifi?radiusKm=1` | Wi-Fi points near a zone |
 
-| `GET` | `/api/zones/serious` | List confirmed (serious) zones |
-
-
-\### Wi-Fi access points
-
+### Wi-Fi access points
 | Method | Endpoint | Purpose |
-
 |---|---|---|
-
 | `POST` | `/api/wifi` | Register an access point |
-
 | `GET` | `/api/wifi` | List all access points |
-
-| `GET` | `/api/wifi/nearby?lat=..\&lng=..\&radiusKm=1` | Available points near a location |
-
+| `GET` | `/api/wifi/{id}` | Get one access point |
+| `GET` | `/api/wifi/nearby?lat=..&lng=..&radiusKm=1` | Available points near a location |
 | `PUT` | `/api/wifi/{id}/toggle` | Switch availability on or off |
 
-| `GET` | `/api/wifi/{id}` | Get one access point |
+### Try it
 
-\### Try it
-
-
-
-\*\*1. Add a resident\*\* – `POST /api/users/residents`
-
+**1. Add a resident** – `POST /api/users/residents`
 ```json
-
 { "name": "Anu", "email": "anu@mail.com", "phone": "9999999999", "hostelOrArea": "Hostel A" }
-
 ```
 
-
-
-\*\*2. Register a Wi-Fi point\*\* – `POST /api/wifi`
-
+**2. Register a Wi-Fi point** – `POST /api/wifi`
 ```json
-
-{ "name": "Library WiFi", "ssid": "LIB\_NET", "latitude": 10.0275, "longitude": 76.3080, "available": true, "ownerName": "Library" }
-
+{ "name": "Library WiFi", "ssid": "LIB_NET", "latitude": 10.0275, "longitude": 76.3080, "available": true, "ownerName": "Library" }
 ```
 
-
-
-\*\*3. Submit a report\*\* – `POST /api/reports` (send it three times)
-
+**3. Submit a report** – `POST /api/reports` (send it three times)
 ```json
-
-{ "userId": 1, "issueType": "NO\_SIGNAL", "description": "No network in hostel",
-
-&#x20; "latitude": 10.0270, "longitude": 76.3075, "locationName": "Hostel A" }
-
+{ "userId": 1, "issueType": "NO_SIGNAL", "description": "No network in hostel",
+  "latitude": 10.0270, "longitude": 76.3075, "locationName": "Hostel A" }
 ```
-
 After the third report, `GET /api/zones` shows one zone with `reportCount` 3 and status `CONFIRMED`.
 
-
-
-\*\*4. Find Wi-Fi near the zone\*\*
-
+**4. Find Wi-Fi near the zone**
 ```
-
 GET /api/zones/1/nearby-wifi?radiusKm=1
-
 ```
+Returns *Library WiFi*.
 
-Returns \*Library WiFi\*.
+Issue types: `NO_SIGNAL`, `SLOW_SPEED`, `FREQUENT_DROPS`, `CONGESTION`.
 
-
-
-Issue types: `NO\_SIGNAL`, `SLOW\_SPEED`, `FREQUENT\_DROPS`, `CONGESTION`.
-
-
-
-\### Error responses
-
+### Error responses
 | Situation | Status | Message |
-
 |---|---|---|
-
 | Missing user, issue type or description | `400` | `userId, issueType and description are required` |
-
 | Unknown user | `404` | `User not found: <id>` |
-
 | Unknown zone | `404` | `Zone not found: <id>` |
 
+---
 
-
-\---
-
-
-
-\## 🗄️ Database
-
-
+## 🗄️ Database
 
 | Table | Purpose |
-
 |---|---|
+| `app_user` | Residents and admins (single table with a `user_type` column) |
+| `connectivity_report` | Reports, linked to a user (`user_id`) and a zone (`zone_id`) |
+| `affected_zone` | Zones with centre, radius, report count and status |
+| `wifi_access_point` | Registered Wi-Fi points and their availability |
 
-| `app\_user` | Residents and admins (single table with a `user\_type` column) |
+---
 
-| `connectivity\_report` | Reports, linked to a user (`user\_id`) and a zone (`zone\_id`) |
+## 📐 Diagrams
 
-| `affected\_zone` | Zones with centre, radius, report count and status |
+### Architecture
+![Architecture](docs/diagrams/architecture_diagram.png)
 
-| `wifi\_access\_point` | Registered Wi-Fi points and their availability |
+### Class diagrams
+![Domain classes](docs/diagrams/class_diagram_domain.png)
 
+![Service classes](docs/diagrams/class_diagram_services.png)
 
+---
 
-\---
-
-
-
-\## 🌱 Sustainable Development Goals
-
-
+## 🌱 Sustainable Development Goals
 
 | Goal | How NetReach supports it |
-
 |---|---|
+| **SDG 9** – Industry, Innovation and Infrastructure | Raises awareness and coordination around digital connectivity infrastructure |
+| **SDG 10** – Reduced Inequalities | Helps people find alternatives when access is poor, reducing digital-access inequality |
+| **SDG 11** – Sustainable Cities and Communities | Lets communities coordinate resources and respond together to infrastructure problems |
 
-| \*\*SDG 9\*\* – Industry, Innovation and Infrastructure | Raises awareness and coordination around digital connectivity infrastructure |
+---
 
-| \*\*SDG 10\*\* – Reduced Inequalities | Helps people find alternatives when access is poor, reducing digital-access inequality |
+## 🔭 Future Scope
 
-| \*\*SDG 11\*\* – Sustainable Cities and Communities | Lets communities coordinate resources and respond together to infrastructure problems |
+- Login and role-based access (admin, volunteer, access-point owner)
+- Notifications to administrators and providers for serious or recurring zones
+- Volunteers and access-point owners offering temporary connectivity
+- Lowering a zone's count and marking it resolved when its reports are resolved
+- A map view of affected zones
 
+---
 
-
-\---
-
-
-
-\## 🔭 Future Scope
-
-
-
-\- Login and role-based access (admin, volunteer, access-point owner)
-
-\- Notifications to administrators and providers for serious or recurring zones
-
-\- Volunteers and access-point owners offering temporary connectivity
-
-\- Lowering a zone's count and marking it resolved when its reports are resolved
-
-\- A map or web front end
-
-
-
-\---
-
-
-
-\## 👥 Team – Group 14
-
-
+## 👥 Team – Group 14
 
 | Name | Role |
-
 |---|---|
-
 | Kareena Treesa Thomas | Team Leader |
-
 | Anjanapriya V P | Team Member |
-
 | Athira Maria | Team Member |
-
 | Parvathi B | Team Member |
 
-
-
-\---
-
-
+---
 
 <div align="center">
 
-
-
-Made with ☕ for \*\*Advanced OOP – Objective 4\*\*
-
-
+Made with ☕ for **Advanced OOP – Objective 4**
 
 </div>
-
-
-
